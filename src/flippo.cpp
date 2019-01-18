@@ -205,8 +205,8 @@ class Flippo {
 		using VectorMatrix = std::vector<Matrix<double>>;
 		using VectorGameState = std::vector<GameState>;
 
-	static NeuralNetwork<double>* nn;
-	static std::default_random_engine generator;
+		NeuralNetwork<double>* nn;
+		static std::default_random_engine generator;
 
 	public:
 
@@ -361,6 +361,7 @@ class Flippo {
 		}
 		return {(double) result / ((double)n * 2), (double)wins/((double)n * 2) * 100, (double) loses / ((double) n*2) * 100};
 	}
+
 };
 
 NeuralNetwork<double>* Flippo::nn = nullptr;

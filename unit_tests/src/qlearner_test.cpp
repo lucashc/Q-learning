@@ -17,7 +17,7 @@ void gracefulExit(int signum) {
 }
 
 int main() {
-	double eta = 5;
+	double eta = 0.01;
 	cout << eta << endl;
 	signal(SIGINT, gracefulExit);
 	Function<double> *s = new LeakyRELU<double>(), *l = new TanH<double>();
