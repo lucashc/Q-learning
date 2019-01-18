@@ -42,7 +42,7 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 		}
 
 
-		static double eval(FlippoGen* p1, FlippoGen* p2) {
+		static double eval(ThreadSafePlayer* p1, ThreadSafePlayer* p2) {
 
 			GameState board;
 
