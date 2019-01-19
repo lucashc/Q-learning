@@ -134,6 +134,9 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 			}
 			return {(double) result / ((double)n * 2), (double)wins/((double)n * 2) * 100, (double) loses / ((double) n*2) * 100};
 		}
+		~ThreadSafePlayer() {
+			delete scoreMutex;
+		}
 
 };
 

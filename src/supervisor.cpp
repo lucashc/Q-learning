@@ -49,15 +49,15 @@ public:
         unsigned int current_index = 0;
         auto m = new std::mutex();
         std::vector<std::thread*> thread_vector;
-        for (int i = 0; i < 4; i++) {
+        int n = std::thread::hardware_concurrency();
+        for (int i = 0; i < n; i++) {
             thread_vector.push_back(new std::thread(_worker, &pairs, m, &current_index));
         }
         for (auto i : thread_vector) {
             i->join();
+            delete i;
         }
-        for (auto i : players) {
-            std::cout << "Score is: " << i->getScore() << std::endl;
-        }
+        delete m;
     }
     void SortPlayers() {
         std::sort(players.begin(), players.end(), [] (ThreadSafePlayer *a, ThreadSafePlayer *b) {
