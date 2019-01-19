@@ -9,6 +9,7 @@
 #include "neural-network.cpp"
 #include <iostream>
 #include <random>
+#include <mutex>
 
 
 class ThreadSafePlayer : public NeuralNetwork<double>{
@@ -18,23 +19,27 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 		using VectorMatrix = std::vector<Matrix<double>>;
 		using VectorGameState = std::vector<GameState>;
 
-		std::mutex scoreMutex;
+		std::mutex *scoreMutex;
 		double score = 0;
 
 		static std::default_random_engine generator;
 
 	public:
 
+		ThreadSafePlayer(std::vector<size_t> sizes, const Function<double>* av, const Function<double>* f) : NeuralNetwork(sizes, av, f) {
+			scoreMutex = new std::mutex();
+		}
+
 		void addScore(double change) {
-			scoreMutex.lock();
+			scoreMutex->lock();
 			score += change;
-			scoreMutex.unlock();
+			scoreMutex->unlock();
 		}
 
 		void setScore(double nScore) {
-			scoreMutex.lock();
+			scoreMutex->lock();
 			score = nScore;
-			scoreMutex.unlock();
+			scoreMutex->unlock();
 		}
 
 		double getScore() {
@@ -55,7 +60,6 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 				board.placePiece(x2, y2, -1);
 
 			}
-
 			return board.getScore();
 
 		}
@@ -65,13 +69,13 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 			int c = s.getColour();
 			auto moves = s.validMoves(c);
 			auto [p, q] = moves[0];
-			double m = nn->evaluate(c*s.potentialBoard(p, q, c).input())[0]; 
+			double m = evaluate(c*s.potentialBoard(p, q, c).input())[0]; 
 			int r = 0;
 
 			for (unsigned int i = 1; i < moves.size(); i++) {
 
 				auto [x, y] = moves[i];
-				double p = nn->evaluate(c*s.potentialBoard(x, y, c).input())[0];
+				double p = evaluate(c*s.potentialBoard(x, y, c).input())[0];
 
 				if (p > m) {
 					m = p;
@@ -133,6 +137,6 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 
 };
 
-std::default_random_engine Flippo::generator = std::default_random_engine(time(0));
+std::default_random_engine ThreadSafePlayer::generator = std::default_random_engine(time(0));
 
 #endif

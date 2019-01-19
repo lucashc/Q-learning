@@ -14,6 +14,7 @@ template <typename T>
 class Matrix {
 	private:
 
+		static std::default_random_engine generator;
 		// Member variables
 
 		std::vector<T> data;
@@ -87,9 +88,8 @@ class Matrix {
 		// Random
 
 		static Matrix<T> initializeRandom(const size_t rows, const size_t columns, const T min=-1, const T max=1) {
-			std::default_random_engine generator(time(0));
 			std::uniform_real_distribution<T> distribution(min, max);
-			auto gen = [&distribution, &generator](){
+			auto gen = [&distribution](){
 				return distribution(generator);
 			};
 			std::vector<T> v(rows*columns);
@@ -346,5 +346,8 @@ template<typename T>
 inline Matrix<T> operator*(int i, const Matrix<T>& m) {
 	return m * i;
 }
+
+template<typename T> 
+std::default_random_engine Matrix<T>::generator = std::default_random_engine(time(0));
 
 #endif
