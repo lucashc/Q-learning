@@ -8,8 +8,8 @@
 #include "matrix.cpp"
 #include "neural-network.cpp"
 #include <iostream>
-#include <random>
 #include <mutex>
+#include "randomgenerator.cpp"
 
 
 class ThreadSafePlayer : public NeuralNetwork<double>{
@@ -21,8 +21,6 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 
 		std::mutex *scoreMutex;
 		double score = 0;
-
-		static std::default_random_engine generator;
 
 	public:
 
@@ -100,13 +98,13 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 				// White Random
 				std::vector<std::tuple<int, int>> moves1 = white.validMoves(-1);
 				std::uniform_int_distribution<int> distribution1(0, moves1.size()-1);
-				auto [i1, j1] = moves1[distribution1(generator)];
+				auto [i1, j1] = moves1[distribution1(RandomGenerator::generator)];
 				white.placePiece(i1, j1, -1);
 
 				// Black Random
 				std::vector<std::tuple<int, int>> moves2 = black.validMoves(1);
 				std::uniform_int_distribution<int> distribution2(0, moves2.size()-1);
-				auto [i2, j2] = moves2[distribution2(generator)];
+				auto [i2, j2] = moves2[distribution2(RandomGenerator::generator)];
 				black.placePiece(i2, j2, 1);
 
 				// Black AI
@@ -139,7 +137,5 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 		}
 
 };
-
-std::default_random_engine ThreadSafePlayer::generator = std::default_random_engine(time(0));
 
 #endif

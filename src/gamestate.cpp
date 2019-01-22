@@ -7,7 +7,6 @@
 #include "matrix.cpp"
 #include "neural-network.cpp"
 #include <iostream>
-#include <random>
 
 const int MAX_SCORE = 64;
 const int BOARD_WIDTH = 8;

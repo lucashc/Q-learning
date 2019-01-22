@@ -4,17 +4,16 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <random>
 #include <algorithm>
 #include <functional>
 #include <fstream>
 #include <ctime>
+#include "randomgenerator.cpp"
 
 template <typename T>
 class Matrix {
 	private:
 
-		static std::default_random_engine generator;
 		// Member variables
 
 		std::vector<T> data;
@@ -90,7 +89,7 @@ class Matrix {
 		static Matrix<T> initializeRandom(const size_t rows, const size_t columns, const T min=-1, const T max=1) {
 			std::uniform_real_distribution<T> distribution(min, max);
 			auto gen = [&distribution](){
-				return distribution(generator);
+				return distribution(RandomGenerator::generator);
 			};
 			std::vector<T> v(rows*columns);
 			std::generate(v.begin(), v.end(), gen);
@@ -346,8 +345,5 @@ template<typename T>
 inline Matrix<T> operator*(int i, const Matrix<T>& m) {
 	return m * i;
 }
-
-template<typename T> 
-std::default_random_engine Matrix<T>::generator = std::default_random_engine(time(0));
 
 #endif
