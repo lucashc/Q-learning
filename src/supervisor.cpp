@@ -5,12 +5,14 @@
 #include "threadsafeplayer.cpp"
 #include "activators.cpp"
 #include <iostream>
+#include <random>
 
 
 class Supervisor {
 private:
 
 	int size;
+	const double exchangeChance = 0.5;
 
 public:
 
@@ -47,7 +49,39 @@ public:
 
 
 	void crossover(double alpha) {
+		std::random_shuffle(players.begin(), players.end());
+		int half = size/2;
+		for (int i = 0; i < half; i++)
+			if (RandomGenerator::randomDouble(0, 1) > alpha)
+				randomSelect(*players[i], *players[half + i]);
+	}
 
+	void cut(ThreadSafePlayer& p1, ThreadSafePlayer& p2) {
+		//todo implement single cut and switch
+	}
+
+	void randomSelect(ThreadSafePlayer& p1, ThreadSafePlayer& p2) {
+		for (unsigned int i = 0; i < p1.weights.size(); i++) {
+			for (unsigned int j = 0; j < p1.weights[i].rows*p1.weights[i].columns; j++) {
+				if (RandomGenerator::randomDouble(0, 1) > exchangeChance) {
+					double temp = p1.weights[i][j];
+					p1.weights[i][j] = p2.weights[i][j];
+					p2.weights[i][j] = temp;
+				}
+			}
+
+			for (unsigned int j = 0; j < p1.biases[i].rows*p1.biases[i].columns; j++) {
+				if (RandomGenerator::randomDouble(0, 1) > exchangeChance) {
+					double temp = p1.biases[i][j];
+					p1.biases[i][j] = p2.biases[i][j];
+					p2.biases[i][j] = temp;
+				}
+			}
+		}
+	}
+
+	void biologicalCut(ThreadSafePlayer& p1, ThreadSafePlayer& p2) {
+		//todo implement biological cut and switch
 	}
 
 	double getTotalScore() {
@@ -67,7 +101,7 @@ public:
 		}
 		std::vector<ThreadSafePlayer*> newPlayers;
 		for (int i = 0; i < size; i++) {
-			newPlayers.push_back(new ThreadSafePlayer(&players[std::distance(arr, std::lower_bound(arr, arr + size, RandomGenerator::randomDouble()))]));
+			newPlayers.push_back(new ThreadSafePlayer(*players[std::lower_bound(arr, arr + size, RandomGenerator::randomDouble(0, 1)) - arr]));
 		}
 
 		for (int i = 0; i < size; i++) {

@@ -17,9 +17,6 @@ class NeuralNetwork {
 	using VectorMatrix = typename std::vector<Matrix<T>>;
 	private:
 
-		VectorMatrix weights;
-		VectorMatrix biases;
-
 		size_t inputSize;
 		size_t outputSize;
 
@@ -31,6 +28,10 @@ class NeuralNetwork {
 		std::vector<std::function<Matrix<T>(const Matrix<T>&)>> derivatives;
 
 	public:
+
+		VectorMatrix weights;
+		VectorMatrix biases;
+
 		NeuralNetwork() {}
 
 		NeuralNetwork(const std::string &filename) {
