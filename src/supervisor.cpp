@@ -11,7 +11,7 @@ class Supervisor {
 private:
 
 	int size;
-    
+
 public:
 
     std::vector<ThreadSafePlayer*> players;
@@ -22,7 +22,7 @@ public:
         }
     }
 
-	void evolve(int i = -1, double mutationChance = 0.08, double crossoverChance = 0.5, bool verbose = true, bool test = true, int ffrequency = 100, int testSize = 1000) {
+	void evolve(int i = -1, double mutationChance = 0.08, double crossoverChance = 0.5, bool verbose = true, bool test = true, int frequency = 100, int testSize = 1000) {
 
 		int start = i;
 
@@ -40,14 +40,22 @@ public:
 			i--;
 
 			if (verbose) {
-				std::cout << "Episode " << start - i << std::endl;	
+				std::cout << "Episode " << start - i << std::endl;
 			}
 		}
 	}
 
 
 	void crossover(double alpha) {
-		
+
+	}
+
+	double getTotalScore() {
+		double total = 0;
+		for (unsigned int i = 0; i < players.size(); i++) {
+			total += players[i]->getScore();
+		}
+		return total;
 	}
 
 	void select() {
@@ -59,20 +67,20 @@ public:
 		}
 		std::vector<ThreadSafePlayer*> newPlayers;
 		for (int i = 0; i < size; i++) {
-			newPlayers.push_back(new ThreadSafePlayer(&players[distance(arr, std::lower_bound(arr, arr + size, RandomGenerator::randomDouble()))]));
+			newPlayers.push_back(new ThreadSafePlayer(&players[std::distance(arr, std::lower_bound(arr, arr + size, RandomGenerator::randomDouble()))]));
 		}
 
 		for (int i = 0; i < size; i++) {
 			delete players[i];
 			players[i] = newPlayers[i];
 		}
-		
+
 	}
-	
+
 	void mutate(double mutationChance) {
 
 	}
-	
+
 	static void _worker(std::vector<std::tuple<ThreadSafePlayer*, ThreadSafePlayer*>> *pairs, std::mutex *index_mutex, unsigned int *index) {
         while (true) {
             index_mutex->lock();
@@ -123,7 +131,7 @@ public:
 
     void benchmarkBestRandom(int n = 1000) {
         sortPlayers();
-        auto [score, wins, loses] = players[0]->randomBenchmarker(n);   
+        auto [score, wins, loses] = players[0]->randomBenchmarker(n);
         std::cout << "Score: " << score << " Wins: " << wins << " Loses: " << loses << " Draws: " << (100 - loses - wins) << std::endl;
     }
 
