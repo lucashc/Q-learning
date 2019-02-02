@@ -22,7 +22,7 @@ void gracefulExit(int signum) {
 
 int main() {
     Function<double> *s = new Sigmoid<double>(), *l = new Linear<double>();
-    super = new Supervisor(300, {64, 1}, s, l);
+    super = new Supervisor(300, {64, 16, 1}, s, l);
     super->evolve(1000);
     delete s; delete l; delete super;
 }

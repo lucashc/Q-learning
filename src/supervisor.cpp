@@ -113,25 +113,23 @@ public:
 	}
 
 	void mutate(double mutationChance) {
-		for (int i = 0; i < size; i++) {
-			if (RandomGenerator::randomDouble(0,1) > 0.5) {
-				defaultMutate(i);
-			}
-		}
+		for (int i = 0; i < size; i++)
+			defaultMutate(i, mutationChance);
 	}
 
-	void defaultMutate(int p) {
-		double mutation_rate = 0.02;
-		double mutation_amount = 0.2;
+	void defaultMutate(int p, double mutationChance) {
+		double mutation_amount = 0.1;
 		for (unsigned int i = 0; i < players[p]->weights.size(); i++) {
+			
 			for (unsigned int j = 0; j < players[p]->biases[i].size(); j++) {
-				if (RandomGenerator::randomDouble(0,1) < mutation_rate) {
-					players[p]->biases[i][j] *= RandomGenerator::randomDouble(1-mutation_amount, 1 + mutation_amount);
+				if (RandomGenerator::randomDouble(0,1) < mutationChance) {
+					players[p]->biases[i][j] += RandomGenerator::randomDouble(-mutation_amount, mutation_amount);
 				}
 			}
+
 			for (unsigned int j = 0; j < players[p]->weights[i].size(); j++) {
-				if (RandomGenerator::randomDouble(0,1) < mutation_rate) {
-					players[p]->weights[i][j] *= RandomGenerator::randomDouble(1 - mutation_amount, 1 + mutation_amount);
+				if (RandomGenerator::randomDouble(0,1) < mutationChance) {
+					players[p]->weights[i][j] += RandomGenerator::randomDouble(-mutation_amount, mutation_amount);
 				}
 			}
 		}
