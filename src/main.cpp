@@ -21,8 +21,9 @@ void gracefulExit(int signum) {
 }
 
 int main() {
+  	signal(SIGINT, gracefulExit);
     Function<double> *s = new Sigmoid<double>(), *l = new Linear<double>();
-    super = new Supervisor(300, {64, 16, 1}, s, l);
-    super->evolve(1000);
+    super = new Supervisor(640, {64, 32, 1}, s, l);
+    super->evolve(-1);
     delete s; delete l; delete super;
 }

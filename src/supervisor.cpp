@@ -13,6 +13,7 @@ private:
 
 	int size;
 	const double exchangeChance = 0.5;
+	int threads = 4; //0 for thread concurruncy
 
 public:
 
@@ -24,11 +25,11 @@ public:
         }
     }
 
-	void evolve(int i = -1, double mutationChance = 0.08, double crossoverChance = 0.5, bool verbose = true, bool test = true, int frequency = 5, int testSize = 1000) {
+	void evolve(int i = -1, double mutationChance = 0.001, double crossoverChance = 0.1, bool verbose = true, bool test = true, int frequency = 50, int testSize = 5000) {
 
 		int start = i;
 
-		while (i >= 0) {
+		while (i != 0) {
 
 			playCompetition();
 
@@ -166,7 +167,7 @@ public:
         unsigned int current_index = 0;
         auto m = new std::mutex();
         std::vector<std::thread*> thread_vector;
-        int n = std::thread::hardware_concurrency();
+        int n = threads ? threads : std::thread::hardware_concurrency();
         for (int i = 0; i < n; i++) {
             thread_vector.push_back(new std::thread(_worker, &pairs, m, &current_index));
         }
