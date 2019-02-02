@@ -307,6 +307,10 @@ class Matrix {
 			return oss.str();
 		}
 
+		inline size_t size() const {
+			return rows * columns;
+		}
+
 		inline bool isSameSize(const Matrix<T>& m) const {
 			return rows == m.rows && columns == m.columns;
 		}

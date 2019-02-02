@@ -28,6 +28,11 @@ class ThreadSafePlayer : public NeuralNetwork<double>{
 			scoreMutex = new std::mutex();
 		}
 
+		ThreadSafePlayer(const ThreadSafePlayer &old) : NeuralNetwork<double>(old){
+			score = old.score;
+			scoreMutex = new std::mutex();
+		}
+
 		void addScore(double change) {
 			scoreMutex->lock();
 			score += change;

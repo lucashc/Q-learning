@@ -1,6 +1,6 @@
 CC = g++
 FLAGS = -Wall -pipe --std=c++17 -lm -pthread
-DEBUG = -Og -g
+DEBUG = -O0 -g
 RELEASE = -O3
 INCLUDES = -I./src
 

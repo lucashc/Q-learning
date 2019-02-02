@@ -24,7 +24,7 @@ public:
         }
     }
 
-	void evolve(int i = -1, double mutationChance = 0.08, double crossoverChance = 0.5, bool verbose = true, bool test = true, int frequency = 100, int testSize = 1000) {
+	void evolve(int i = -1, double mutationChance = 0.08, double crossoverChance = 0.5, bool verbose = true, bool test = true, int frequency = 5, int testSize = 1000) {
 
 		int start = i;
 
@@ -101,7 +101,8 @@ public:
 		}
 		std::vector<ThreadSafePlayer*> newPlayers;
 		for (int i = 0; i < size; i++) {
-			newPlayers.push_back(new ThreadSafePlayer(*players[std::lower_bound(arr, arr + size, RandomGenerator::randomDouble(0, 1)) - arr]));
+			auto index = std::lower_bound(arr, arr + size, RandomGenerator::randomDouble(0, 1)) - arr - 1;
+			newPlayers.push_back(new ThreadSafePlayer(*players[index]));
 		}
 
 		for (int i = 0; i < size; i++) {
@@ -112,7 +113,28 @@ public:
 	}
 
 	void mutate(double mutationChance) {
+		for (int i = 0; i < size; i++) {
+			if (RandomGenerator::randomDouble(0,1) > 0.5) {
+				defaultMutate(i);
+			}
+		}
+	}
 
+	void defaultMutate(int p) {
+		double mutation_rate = 0.02;
+		double mutation_amount = 0.2;
+		for (unsigned int i = 0; i < players[p]->weights.size(); i++) {
+			for (unsigned int j = 0; j < players[p]->biases[i].size(); j++) {
+				if (RandomGenerator::randomDouble(0,1) < mutation_rate) {
+					players[p]->biases[i][j] *= RandomGenerator::randomDouble(1-mutation_amount, 1 + mutation_amount);
+				}
+			}
+			for (unsigned int j = 0; j < players[p]->weights[i].size(); j++) {
+				if (RandomGenerator::randomDouble(0,1) < mutation_rate) {
+					players[p]->weights[i][j] *= RandomGenerator::randomDouble(1 - mutation_amount, 1 + mutation_amount);
+				}
+			}
+		}
 	}
 
 	static void _worker(std::vector<std::tuple<ThreadSafePlayer*, ThreadSafePlayer*>> *pairs, std::mutex *index_mutex, unsigned int *index) {
@@ -157,14 +179,14 @@ public:
         delete m;
     }
 
-    void sortPlayers() {
+    void sortPlayersByScore() {
         std::sort(players.begin(), players.end(), [] (ThreadSafePlayer *a, ThreadSafePlayer *b) {
             return a->getScore() > b->getScore();
         });
     }
 
     void benchmarkBestRandom(int n = 1000) {
-        sortPlayers();
+        sortPlayersByScore();
         auto [score, wins, loses] = players[0]->randomBenchmarker(n);
         std::cout << "Score: " << score << " Wins: " << wins << " Loses: " << loses << " Draws: " << (100 - loses - wins) << std::endl;
     }
